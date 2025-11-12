@@ -50,7 +50,6 @@ const BmiForm: React.FC<BmiFormProps> = () => {
     handleSubmit,
     watch,
     formState: { errors, isValid },
-    setValue,
   } = useForm<BmiFormData>({
     resolver: zodResolver(bmiFormSchema),
     mode: "onChange",
@@ -111,13 +110,6 @@ const BmiForm: React.FC<BmiFormProps> = () => {
       setIsSubmitting(false);
     }
   };
-
-  const handleNumberInput = (e: React.ChangeEvent<HTMLInputElement>, field: keyof BmiFormData) => {
-    const value = parseFloat(e.target.value)
-    if (!isNaN(value)) {
-      setValue(field, value, { shouldValidate: true, shouldDirty: true })
-    }
-  }
 
   return (
     <div className="max-w-2xl mx-auto">
