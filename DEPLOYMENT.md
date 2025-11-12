@@ -4,6 +4,12 @@ Your code has been successfully pushed to GitHub: **https://github.com/HDB23/fit
 
 ## 🚀 Deploy to Vercel
 
+## ⚠️ IMPORTANT: Database Setup Required
+
+**SQLite will NOT work on Vercel serverless functions** (read-only filesystem). You **MUST** use PostgreSQL for production.
+
+Before deploying the backend, set up a PostgreSQL database (see Database Setup section below).
+
 ### Option 1: Deploy Frontend and Backend Separately (Recommended)
 
 #### Step 1: Deploy Frontend (Client)

@@ -4,7 +4,6 @@ import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
 import cookieParser from 'cookie-parser'
 import dotenv from 'dotenv'
-const { PrismaClient } = require('@prisma/client')
 
 // Import routes
 import profileRoutes from './routes/profile'
@@ -17,9 +16,6 @@ dotenv.config()
 
 const app = express()
 const port = process.env.PORT || 3001
-
-// Initialize Prisma
-import { prisma } from './lib/prisma'
 
 
 // Rate limiting
@@ -62,12 +58,21 @@ app.use('/api/contact', contactRoutes)
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error('Error:', err)
+  console.error('Error stack:', err.stack)
   
   if (err.type === 'entity.parse.failed') {
     return res.status(400).json({ error: 'Invalid JSON' })
   }
   
-  res.status(500).json({ error: 'Internal server error' })
+  // Don't leak error details in production
+  const errorMessage = process.env.NODE_ENV === 'production' 
+    ? 'Internal server error' 
+    : err.message || 'Internal server error'
+  
+  res.status(500).json({ 
+    error: errorMessage,
+    ...(process.env.NODE_ENV !== 'production' && { stack: err.stack })
+  })
 })
 
 // 404 handler
@@ -75,24 +80,31 @@ app.use('*', (req, res) => {
   res.status(404).json({ error: 'Route not found' })
 })
 
+// Export handler for Vercel serverless functions
+export default app
 
+// Start server only in development (not in serverless environment)
+if (process.env.NODE_ENV !== 'production' && process.env.VERCEL !== '1') {
+  // Import Prisma only for local development
+  import('./lib/prisma').then(({ prisma }) => {
+    // Graceful shutdown
+    process.on('SIGINT', async () => {
+      console.log('Shutting down gracefully...')
+      await prisma.$disconnect()
+      process.exit(0)
+    })
 
-// Graceful shutdown
-process.on('SIGINT', async () => {
-  console.log('Shutting down gracefully...')
-  await prisma.$disconnect()
-  process.exit(0)
-})
+    process.on('SIGTERM', async () => {
+      console.log('Shutting down gracefully...')
+      await prisma.$disconnect()
+      process.exit(0)
+    })
 
-process.on('SIGTERM', async () => {
-  console.log('Shutting down gracefully...')
-  await prisma.$disconnect()
-  process.exit(0)
-})
-
-// Start server
-app.listen(port, () => {
-  console.log(`🚀 FitFuel server running on port ${port}`)
-  console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`)
-  console.log(`🔗 Client origin: ${process.env.CLIENT_ORIGIN || 'http://localhost:5173'}`)
-})
+    // Start server
+    app.listen(port, () => {
+      console.log(`🚀 FitFuel server running on port ${port}`)
+      console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`)
+      console.log(`🔗 Client origin: ${process.env.CLIENT_ORIGIN || 'http://localhost:5173'}`)
+    })
+  })
+}
