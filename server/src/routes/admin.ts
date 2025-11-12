@@ -4,20 +4,20 @@ import { prisma } from '../lib/prisma'
 const router: Router = Router()
 
 // Get all contact messages
-router.get('/contacts', async (req, res) => {
+router.get('/contacts', async (_req, res) => {
   try {
     const contacts = await prisma.contactMessage.findMany({
       orderBy: { createdAt: 'desc' }
     })
-    res.json({ success: true, contacts })
+    return res.json({ success: true, contacts })
   } catch (error) {
     console.error('Error fetching contacts:', error)
-    res.status(500).json({ error: 'Failed to fetch contacts' })
+    return res.status(500).json({ error: 'Failed to fetch contacts' })
   }
 })
 
 // Get all user profiles
-router.get('/profiles', async (req, res) => {
+router.get('/profiles', async (_req, res) => {
   try {
     const profiles = await prisma.userProfile.findMany({
       orderBy: { createdAt: 'desc' },
@@ -25,15 +25,15 @@ router.get('/profiles', async (req, res) => {
         generatedPlans: true
       }
     })
-    res.json({ success: true, profiles })
+    return res.json({ success: true, profiles })
   } catch (error) {
     console.error('Error fetching profiles:', error)
-    res.status(500).json({ error: 'Failed to fetch profiles' })
+    return res.status(500).json({ error: 'Failed to fetch profiles' })
   }
 })
 
 // Get all generated plans
-router.get('/plans', async (req, res) => {
+router.get('/plans', async (_req, res) => {
   try {
     const plans = await prisma.generatedPlan.findMany({
       orderBy: { createdAt: 'desc' },
@@ -41,10 +41,10 @@ router.get('/plans', async (req, res) => {
         userProfile: true
       }
     })
-    res.json({ success: true, plans })
+    return res.json({ success: true, plans })
   } catch (error) {
     console.error('Error fetching plans:', error)
-    res.status(500).json({ error: 'Failed to fetch plans' })
+    return res.status(500).json({ error: 'Failed to fetch plans' })
   }
 })
 
@@ -60,10 +60,10 @@ router.get('/contacts/:id', async (req, res) => {
       return res.status(404).json({ error: 'Contact message not found' })
     }
     
-    res.json({ success: true, contact })
+    return res.json({ success: true, contact })
   } catch (error) {
     console.error('Error fetching contact:', error)
-    res.status(500).json({ error: 'Failed to fetch contact' })
+    return res.status(500).json({ error: 'Failed to fetch contact' })
   }
 })
 
@@ -82,10 +82,10 @@ router.get('/profiles/:id', async (req, res) => {
       return res.status(404).json({ error: 'User profile not found' })
     }
     
-    res.json({ success: true, profile })
+    return res.json({ success: true, profile })
   } catch (error) {
     console.error('Error fetching profile:', error)
-    res.status(500).json({ error: 'Failed to fetch profile' })
+    return res.status(500).json({ error: 'Failed to fetch profile' })
   }
 })
 
@@ -97,10 +97,10 @@ router.delete('/contacts/:id', async (req, res) => {
       where: { id }
     })
     
-    res.json({ success: true, message: 'Contact message deleted successfully' })
+    return res.json({ success: true, message: 'Contact message deleted successfully' })
   } catch (error) {
     console.error('Error deleting contact:', error)
-    res.status(500).json({ error: 'Failed to delete contact' })
+    return res.status(500).json({ error: 'Failed to delete contact' })
   }
 })
 
@@ -112,10 +112,10 @@ router.delete('/profiles/:id', async (req, res) => {
       where: { id }
     })
     
-    res.json({ success: true, message: 'User profile deleted successfully' })
+    return res.json({ success: true, message: 'User profile deleted successfully' })
   } catch (error) {
     console.error('Error deleting profile:', error)
-    res.status(500).json({ error: 'Failed to delete profile' })
+    return res.status(500).json({ error: 'Failed to delete profile' })
   }
 })
 

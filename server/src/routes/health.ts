@@ -1,9 +1,9 @@
 import { Router } from 'express'
 
-const router = Router()
+const router: Router = Router()
 
-router.get('/', (req, res) => {
-  res.json({ 
+router.get('/', (_req, res) => {
+  return res.json({ 
     status: 'ok',
     timestamp: new Date().toISOString(),
     service: 'FitFuel API',

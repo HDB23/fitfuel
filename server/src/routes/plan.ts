@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { prisma } from '../lib/prisma'
 
-const router = Router()
+const router: Router = Router()
 
 router.get('/:profileId', async (req, res) => {
   try {
@@ -41,7 +41,7 @@ router.get('/:profileId', async (req, res) => {
       }
     })
     
-    res.json({
+    return res.json({
       profile: {
         id: profile.id,
         name: profile.name,
@@ -58,7 +58,7 @@ router.get('/:profileId', async (req, res) => {
     
   } catch (error) {
     console.error('Error retrieving plan:', error)
-    res.status(500).json({ error: 'Internal server error' })
+    return res.status(500).json({ error: 'Internal server error' })
   }
 })
 

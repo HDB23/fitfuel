@@ -2,7 +2,7 @@ import { Router } from 'express'
 import { z } from 'zod'
 import { prisma } from '../lib/prisma'
 
-const router = Router()
+const router: Router = Router()
 
 // Validation schema
 const contactSchema = z.object({
@@ -25,7 +25,7 @@ router.post('/', async (req, res) => {
       }
     })
     
-    res.status(201).json({
+    return res.status(201).json({
       id: contactMessage.id,
       message: 'Contact message sent successfully'
     })
@@ -39,7 +39,7 @@ router.post('/', async (req, res) => {
     }
     
     console.error('Error sending contact message:', error)
-    res.status(500).json({ error: 'Internal server error' })
+    return res.status(500).json({ error: 'Internal server error' })
   }
 })
 

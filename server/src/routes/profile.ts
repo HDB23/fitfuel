@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { prisma } from '../lib/prisma'
 import { calculateBMI, getBMICategory } from '../utils/bmiUtils'
 
-const router = Router()
+const router: Router = Router()
 
 // Validation schema
 const profileSchema = z.object({
@@ -45,7 +45,7 @@ router.post('/', async (req, res) => {
       }
     })
     
-    res.status(201).json({
+    return res.status(201).json({
       id: profile.id,
       bmi: serverBMI,
       category: serverCategory,
@@ -61,7 +61,7 @@ router.post('/', async (req, res) => {
     }
     
     console.error('Error creating profile:', error)
-    res.status(500).json({ error: 'Internal server error' })
+    return res.status(500).json({ error: 'Internal server error' })
   }
 })
 

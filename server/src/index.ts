@@ -14,7 +14,7 @@ import healthRoutes from './routes/health'
 // Load environment variables
 dotenv.config()
 
-const app = express()
+const app: express.Application = express()
 const port = process.env.PORT || 3001
 
 
@@ -48,7 +48,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }))
 app.use(cookieParser())
 
 // Root endpoint
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   res.json({
     message: 'FitFuel API Server',
     version: '1.0.0',
@@ -70,7 +70,7 @@ app.use('/api/plan', planRoutes)
 app.use('/api/contact', contactRoutes)
 
 // Error handling middleware
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   console.error('Error:', err)
   console.error('Error stack:', err.stack)
   
@@ -83,7 +83,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
     ? 'Internal server error' 
     : err.message || 'Internal server error'
   
-  res.status(500).json({ 
+  return res.status(500).json({ 
     error: errorMessage,
     ...(process.env.NODE_ENV !== 'production' && { stack: err.stack })
   })
