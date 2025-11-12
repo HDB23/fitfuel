@@ -1,4 +1,4 @@
-import { Router } from 'express'
+import express, { Router } from 'express'
 import { z } from 'zod'
 import { prisma } from '../lib/prisma'
 
@@ -11,7 +11,7 @@ const contactSchema = z.object({
   message: z.string().min(10).max(1000)
 })
 
-router.post('/', async (req, res) => {
+router.post('/', async (req, res): Promise<express.Response> => {
   try {
     // Validate input
     const validatedData = contactSchema.parse(req.body)

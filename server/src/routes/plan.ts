@@ -1,9 +1,9 @@
-import { Router } from 'express'
+import express, { Router } from 'express'
 import { prisma } from '../lib/prisma'
 
 const router: Router = Router()
 
-router.get('/:profileId', async (req, res) => {
+router.get('/:profileId', async (req, res): Promise<express.Response> => {
   try {
     const { profileId } = req.params
     
