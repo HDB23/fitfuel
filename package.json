@@ -1,0 +1,27 @@
+{
+  "name": "fitfuel",
+  "version": "1.0.0",
+  "description": "Full-stack fitness app for BMI calculation and personalized diet/workout plans",
+  "private": true,
+
+  "scripts": {
+    "dev": "concurrently \"pnpm --filter server dev\" \"pnpm --filter client dev\"",
+    "build": "pnpm --filter client build && pnpm --filter server build",
+    "test": "pnpm --filter client test && pnpm --filter server test",
+    "lint": "pnpm --filter client lint && pnpm --filter server lint",
+    "typecheck": "pnpm --filter client typecheck && pnpm --filter server typecheck",
+    "seed": "pnpm --filter server seed",
+    "db:generate": "pnpm --filter server db:generate",
+    "db:push": "pnpm --filter server db:push",
+    "db:studio": "pnpm --filter server db:studio"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "prettier": "^3.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}
+

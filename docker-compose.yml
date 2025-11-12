@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database (for production-like development)
+  postgres:
+    image: postgres:15-alpine
+    container_name: fitfuel-postgres
+    environment:
+      POSTGRES_DB: fitfuel
+      POSTGRES_USER: fitfuel_user
+      POSTGRES_PASSWORD: fitfuel_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fitfuel_user -d fitfuel"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API Server
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: fitfuel-server
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      DATABASE_URL: postgresql://fitfuel_user:fitfuel_password@postgres:5432/fitfuel
+      JWT_SECRET: development-jwt-secret
+      CLIENT_ORIGIN: http://localhost:5173
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    command: pnpm dev
+
+  # Frontend Client (optional - can run locally with pnpm dev)
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: fitfuel-client
+    environment:
+      VITE_API_URL: http://localhost:3001
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    command: pnpm dev
+    depends_on:
+      - server
+
+volumes:
+  postgres_data:
+

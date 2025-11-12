@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model UserProfile {
+  id        String   @id @default(cuid())
+  name      String
+  age       Int
+  heightCm  Int
+  weightKg  Float
+  bmi       Float
+  category  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  generatedPlans GeneratedPlan[]
+
+  @@map("user_profiles")
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+
+  @@map("contact_messages")
+}
+
+model PlanTemplate {
+  id        String   @id @default(cuid())
+  bmiMin    Float
+  bmiMax    Float
+  category  String
+  meals     String   // MealPlan JSON stored as string
+  workouts  String   // WorkoutPlan JSON stored as string
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("plan_templates")
+}
+
+model GeneratedPlan {
+  id             String      @id @default(cuid())
+  userProfileId  String
+  userProfile    UserProfile @relation(fields: [userProfileId], references: [id], onDelete: Cascade)
+  meals          String      // MealPlan JSON stored as string
+  workouts       String      // WorkoutPlan JSON stored as string
+  createdAt      DateTime    @default(now())
+
+  @@map("generated_plans")
+}

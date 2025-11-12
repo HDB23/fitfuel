@@ -1,0 +1,17 @@
+# New terminal (Backend)
+
+1) cd server
+2) pnpm db:generate
+3) pnpm db:push
+4) pnpm seed
+5) pnpm dev
+
+# Another terminal (Frontend)
+
+1) cd client
+2) pnpm dev
+
+# Another terminal (Database)
+
+1) cd server
+2) npx prisma studio
