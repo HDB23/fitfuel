@@ -47,6 +47,20 @@ app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true, limit: '10mb' }))
 app.use(cookieParser())
 
+// Root endpoint
+app.get('/', (req, res) => {
+  res.json({
+    message: 'FitFuel API Server',
+    version: '1.0.0',
+    endpoints: {
+      health: '/api/health',
+      profile: '/api/profile',
+      plan: '/api/plan',
+      contact: '/api/contact'
+    }
+  })
+})
+
 // Health check endpoint
 app.use('/api/health', healthRoutes)
 
@@ -77,7 +91,18 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 
 // 404 handler
 app.use('*', (req, res) => {
-  res.status(404).json({ error: 'Route not found' })
+  res.status(404).json({ 
+    error: 'Route not found',
+    path: req.originalUrl,
+    method: req.method,
+    availableEndpoints: [
+      'GET /',
+      'GET /api/health',
+      'POST /api/profile',
+      'GET /api/plan/:profileId',
+      'POST /api/contact'
+    ]
+  })
 })
 
 // Export handler for Vercel serverless functions
